@@ -1,0 +1,10 @@
+{
+  "schema_version": 1,
+  "version": "0.1.0",
+  "publisher": {"name": "Draconitic Labs", "email": "support@draconitic.com", "url": "https://draconitic.com"},
+  "plugins": [
+    {"name": "draconitic-workbench", "display_name": "Draconitic Workbench", "short_description": "Local evidence tools", "description": "Create evidence bundles, review extension declarations, and compare JSON snapshots locally.", "local_executor": true},
+    {"name": "draconitic-agents", "display_name": "Draconitic Agents", "short_description": "Dated public evidence", "description": "Search dated public evidence, discover datasets, and check exact identifiers and citation membership.", "local_executor": false, "mcp_url": "https://agents.draconitic.com/mcp"},
+    {"name": "flintglade-products", "display_name": "Flintglade Product Adapters", "short_description": "Feed and webhook workflows", "description": "Use existing Greenlit Goods and Proscenium installations for feed preflight and local webhook scenarios.", "local_executor": true}
+  ]
+}

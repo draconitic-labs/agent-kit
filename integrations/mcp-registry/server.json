@@ -1,0 +1,9 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "com.draconitic/agents",
+  "title": "Draconitic Agents",
+  "description": "Dated public evidence, package identity records, dataset discovery and citation checks.",
+  "version": "0.1.0",
+  "websiteUrl": "https://agents.draconitic.com",
+  "remotes": [{"type": "streamable-http", "url": "https://agents.draconitic.com/mcp"}]
+}
