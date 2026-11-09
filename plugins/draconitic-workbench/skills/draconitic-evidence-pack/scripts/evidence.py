@@ -14,7 +14,9 @@ MAX_FILE = 64 * 1024 * 1024
 MAX_TOTAL = 256 * 1024 * 1024
 MAX_FILES = 1000
 BLOCKED = {'.env', '.netrc', '.npmrc', '.pypirc', 'credentials', 'credentials.json',
-           'id_rsa', 'id_ed25519'}
+           'id_rsa', 'id_ed25519', 'id_ecdsa', 'id_dsa', '.git-credentials', '.pgpass'}
+BLOCKED_DIRS = {'.git', '.ssh', '.aws', '.gnupg', '.kube'}
+BLOCKED_SEQUENCES = [('.docker', 'config.json'), ('.config', 'gh')]
 
 
 def relative(value):
@@ -40,10 +42,13 @@ def checked_file(root, value):
 
 
 def sensitive(value):
-    for part in relative(value).parts:
-        low = part.lower()
+    parts = [part.lower() for part in relative(value).parts]
+    for low in parts:
         if (low in BLOCKED or low.startswith('.env.') or low.endswith(('.pem', '.key', '.secret', '.p12', '.pfx'))
-                or low in {'.git', '.ssh', '.aws', '.gnupg'}):
+                or low in BLOCKED_DIRS):
+            raise ValueError('credential-like path refused; review selected files manually')
+    for first, second in BLOCKED_SEQUENCES:
+        if any(a == first and b == second for a, b in zip(parts, parts[1:])):
             raise ValueError('credential-like path refused; review selected files manually')
 
 

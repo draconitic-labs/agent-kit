@@ -68,4 +68,4 @@ For portable standalone use, unzip a `*-skill.zip` into a folder named exactly a
 | OpenCode | `.opencode/skills/<skill-name>/` |
 | Cline | `.cline/skills/<skill-name>/` |
 
-A standalone Public Evidence skill does not install an MCP connection. Configure the existing public endpoint through that harness's native MCP settings, or use the documented HTTP fallback. Delete only the specific copied skill directory to remove it. Do not overwrite an existing skill folder or replace an entire skills directory.
+A standalone Public Evidence skill does not install an MCP connection. Configure `https://agents.draconitic.com/mcp` through that harness's MCP settings, or use the HTTP API described in the skill's `SKILL.md`, whose OpenAPI document is `https://agents.draconitic.com/openapi.json`. Delete only the specific copied skill directory to remove it. Do not overwrite an existing skill folder or replace an entire skills directory.

@@ -73,6 +73,16 @@ class EvidenceTests(unittest.TestCase):
             (self.root / name).write_text('synthetic fixture')
             with self.assertRaises(ValueError): self.create([name])
 
+    def test_more_credential_paths_refused(self):
+        for name in ['id_ecdsa', 'id_dsa', '.git-credentials', '.pgpass', '.kube/config',
+                     '.docker/config.json', '.config/gh/hosts.yml', 'home/.config/gh/config.yml']:
+            with self.subTest(name=name):
+                path = self.root / name
+                path.parent.mkdir(parents=True, exist_ok=True)
+                path.write_text('synthetic fixture')
+                with self.assertRaises(ValueError): self.create([name])
+                self.assertFalse(self.out.exists())
+
     def test_duplicate_selection_refused(self):
         with self.assertRaises(ValueError): self.create(['report.txt', 'report.txt'])
 

@@ -29,9 +29,11 @@ python3 -m venv .venv
 .venv/bin/python scripts/validate.py
 ```
 
-`scripts/build.py` writes `dist/`: one ZIP per plugin, one ZIP per skill, a marketplace ZIP, the marketplace tree in `dist/marketplace`, and `SHA256SUMS`. The archives are byte-for-byte reproducible. The builder removes and recreates `dist/` on every run, so keep nothing else there.
+`scripts/build.py` writes `dist/`: one ZIP per plugin, one ZIP per skill, a marketplace ZIP, the marketplace tree in `dist/marketplace`, and `SHA256SUMS`. Rebuilding with the same Python and zlib versions gives byte-identical archives. The builder removes and recreates `dist/` on every run, so keep nothing else there.
 
-`scripts/validate.py` checks every generated manifest, skill header and archive. `scripts/check_native.py [receipt.json]` validates and installs the packages with whichever of `claude`, `codex` and `grok` are installed, using throwaway configuration directories; it runs no model. `scripts/smoke_remote.py` calls every read tool of the public Agents service once.
+`scripts/validate.py` checks every generated manifest, skill header and archive. `--schema-dir DIR` also validates the manifests against the Agent Plugins schemas; download https://agent-plugins.org/schemas/1.0.0/plugin.schema.json and https://agent-plugins.org/schemas/1.0.0/mcp.schema.json into `DIR` as `plugin-schema.json` and `mcp-schema.json`. `scripts/check_native.py [receipt.json]` validates and installs the packages with whichever of `claude`, `codex` and `grok` are installed, using throwaway configuration directories; it runs no model. `scripts/smoke_remote.py` calls every read tool of the public Agents service once.
+
+`integrations/mcp-registry/server.json` describes the Agents service for the [MCP Registry](https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json), as a remote streamable-HTTP server.
 
 ## Install
 

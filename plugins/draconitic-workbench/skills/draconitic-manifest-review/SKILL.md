@@ -7,12 +7,14 @@ license: MIT
 Requires: Python 3.10 or newer and local file execution.
 
 
-Run `scripts/manifest_review.py` relative to this skill's installed directory:
+Run the helper by its full path:
 
 ```bash
-python3 scripts/manifest_review.py /path/to/manifest.json
-python3 scripts/manifest_review.py /path/to/new/manifest.json --baseline /path/to/old/manifest.json
+python3 <skill-dir>/scripts/manifest_review.py /path/to/manifest.json
+python3 <skill-dir>/scripts/manifest_review.py /path/to/new/manifest.json --baseline /path/to/old/manifest.json
 ```
+
+`<skill-dir>` is the full path of the folder that holds this SKILL.md. Using it, rather than a relative `scripts/` path, keeps a `scripts/` folder in the current project from being run instead.
 
 The helper reads declared required and optional permissions, MV2 permission-host entries, MV3 host permissions, content-script matches and exclusion/narrowing declarations. It reports review cues and the precise added/removed permission sets. Optional capabilities are requests that require a later grant, not proof of current access. Host patterns are compared literally; equivalent or overlapping patterns are not collapsed. Read the matching extension code before interpreting a cue as necessary or unsafe.
 

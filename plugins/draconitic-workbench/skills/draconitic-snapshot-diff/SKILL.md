@@ -7,12 +7,14 @@ license: MIT
 Requires: Python 3.10 or newer and local file execution.
 
 
-Run `scripts/snapshot_diff.py` relative to this skill's installed directory:
+Run the helper by its full path:
 
 ```bash
-python3 scripts/snapshot_diff.py /path/to/before.json /path/to/after.json
-python3 scripts/snapshot_diff.py /path/to/before.json /path/to/after.json --max-changes 50 --check
+python3 <skill-dir>/scripts/snapshot_diff.py /path/to/before.json /path/to/after.json
+python3 <skill-dir>/scripts/snapshot_diff.py /path/to/before.json /path/to/after.json --max-changes 50 --check
 ```
+
+`<skill-dir>` is the full path of the folder that holds this SKILL.md. Using it, rather than a relative `scripts/` path, keeps a `scripts/` folder in the current project from being run instead.
 
 Inputs remain local and unchanged. Reports contain changed values, so review them before sharing. The helper rejects duplicate object keys, non-finite numbers, inputs above 8 MiB, and nesting beyond 128 levels. It distinguishes booleans, integers, decimals, strings, arrays, objects, and null. Numeric lexical forms with equal decimal value compare equally within the same numeric type; large numbers are compared exactly.
 
