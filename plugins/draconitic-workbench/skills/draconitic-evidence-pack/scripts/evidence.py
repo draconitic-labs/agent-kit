@@ -4,6 +4,7 @@ import argparse
 import hashlib
 import json
 import os
+import re
 from pathlib import Path, PurePosixPath
 import shutil
 import stat
@@ -13,10 +14,16 @@ from urllib.parse import urlsplit
 MAX_FILE = 64 * 1024 * 1024
 MAX_TOTAL = 256 * 1024 * 1024
 MAX_FILES = 1000
+# File names, checked on the selected relative paths.
 BLOCKED = {'.env', '.netrc', '.npmrc', '.pypirc', 'credentials', 'credentials.json',
-           'id_rsa', 'id_ed25519', 'id_ecdsa', 'id_dsa', '.git-credentials', '.pgpass'}
-BLOCKED_DIRS = {'.git', '.ssh', '.aws', '.gnupg', '.kube'}
-BLOCKED_SEQUENCES = [('.docker', 'config.json'), ('.config', 'gh')]
+           'id_rsa', 'id_ed25519', 'id_ecdsa', 'id_dsa', '.git-credentials', '.pgpass',
+           'application_default_credentials.json', '.vault-token', 'credentials.tfrc.json'}
+BLOCKED_SUFFIXES = ('.pem', '.key', '.secret', '.p12', '.pfx')
+SECURITY_KEY = re.compile(r'id_[a-z0-9]+_sk')  # FIDO keys such as id_ed25519_sk
+# Folder names and folder/file sequences, checked on the resolved root plus the relative path.
+BLOCKED_DIRS = {'.git', '.ssh', '.aws', '.gnupg', '.kube', '.azure'}
+BLOCKED_SEQUENCES = [('.docker', 'config.json'), ('.config', 'gh'), ('.cargo', 'credentials.toml'),
+                     ('.terraform.d', 'credentials.tfrc.json')]
 
 
 def relative(value):
@@ -41,14 +48,19 @@ def checked_file(root, value):
     return cur
 
 
-def sensitive(value):
+def sensitive(value, root=None):
+    """Refuse credential-like selections. ``root`` is the resolved root folder."""
     parts = [part.lower() for part in relative(value).parts]
     for low in parts:
-        if (low in BLOCKED or low.startswith('.env.') or low.endswith(('.pem', '.key', '.secret', '.p12', '.pfx'))
-                or low in BLOCKED_DIRS):
+        if (low in BLOCKED or low.startswith('.env.') or low.endswith(BLOCKED_SUFFIXES)
+                or SECURITY_KEY.fullmatch(low)):
             raise ValueError('credential-like path refused; review selected files manually')
+    # The root counts too: --root ~/.config/gh must not package hosts.yml.
+    full = [part.lower() for part in Path(root).parts] + parts if root is not None else parts
+    if any(low in BLOCKED_DIRS for low in full):
+        raise ValueError('credential-like path refused; review selected files manually')
     for first, second in BLOCKED_SEQUENCES:
-        if any(a == first and b == second for a, b in zip(parts, parts[1:])):
+        if any(a == first and b == second for a, b in zip(full, full[1:])):
             raise ValueError('credential-like path refused; review selected files manually')
 
 
@@ -87,7 +99,7 @@ def create(root, files, out, sources):
     try:
         records, total = [], 0
         for value in sorted(files):
-            sensitive(value)
+            sensitive(value, root)
             data = read_bounded(checked_file(root, value))
             total += len(data)
             if total > MAX_TOTAL:

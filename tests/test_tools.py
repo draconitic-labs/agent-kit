@@ -83,6 +83,43 @@ class EvidenceTests(unittest.TestCase):
                 with self.assertRaises(ValueError): self.create([name])
                 self.assertFalse(self.out.exists())
 
+    def test_new_credential_names_refused(self):
+        for name in ['.cargo/credentials.toml', 'gcloud/application_default_credentials.json', '.azure/accessTokens.json',
+                     '.vault-token', '.terraform.d/credentials.tfrc.json', 'id_ed25519_sk', 'id_ecdsa_sk']:
+            with self.subTest(name=name):
+                path = self.root / name
+                path.parent.mkdir(parents=True, exist_ok=True)
+                path.write_text('synthetic fixture')
+                with self.assertRaises(ValueError): self.create([name])
+                self.assertFalse(self.out.exists())
+
+    def test_credential_root_folders_refused(self):
+        home = Path(self.temp.name) / 'home'
+        cases = [
+            ('.config/gh', 'hosts.yml'),
+            ('.config', 'gh/hosts.yml'),
+            ('.docker', 'config.json'),
+            ('.kube', 'config'),
+            ('.git', 'config'),
+        ]
+        for root_rel, name in cases:
+            with self.subTest(root=root_rel, name=name):
+                root = home / root_rel
+                (root / name).parent.mkdir(parents=True, exist_ok=True)
+                (root / name).write_text('synthetic fixture')
+                with self.assertRaises(ValueError):
+                    evidence.create(root, [name], self.out, [])
+                self.assertFalse(self.out.exists())
+        link = Path(self.temp.name) / 'innocent-looking'
+        link.symlink_to(home / '.config' / 'gh', target_is_directory=True)
+        with self.assertRaises(ValueError):
+            evidence.create(link, ['hosts.yml'], self.out, [])
+        self.assertFalse(self.out.exists())
+
+    def test_ordinary_root_still_accepted(self):
+        self.create()
+        self.assertTrue((self.out / 'manifest.json').is_file())
+
     def test_duplicate_selection_refused(self):
         with self.assertRaises(ValueError): self.create(['report.txt', 'report.txt'])
 

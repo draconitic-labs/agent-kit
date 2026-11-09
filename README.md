@@ -10,7 +10,7 @@ Draconitic Agent Kit is a set of plugins and portable skills for coding agents: 
 
 ## Skills
 
-- **Evidence Pack** copies an explicit list of files into a bundle with a SHA-256 manifest, and verifies a bundle later. It refuses symlinks, paths outside the root, common credential filenames and existing output paths.
+- **Evidence Pack** copies an explicit list of files into a bundle with a SHA-256 manifest, and verifies a bundle later. It refuses symlinks, paths outside the root, common credential files and folders (also when the root itself is one, such as `~/.config/gh`) and existing output paths.
 - **Manifest Review** reads a browser-extension manifest and reports required and optional permissions, broad host patterns, and the changes against a baseline manifest, including content scripts, CSP, externally connectable and web-accessible resources.
 - **Snapshot Diff** compares two JSON documents value by value, keeping types exact (boolean vs integer, null vs missing, exact decimals), and reports each change at its JSON Pointer.
 - **Public Evidence** searches the Draconitic Agents corpus of dated public records, lists datasets, checks exact package identifiers, lists revisions since a date, and checks citation membership and claim spans against returned records.

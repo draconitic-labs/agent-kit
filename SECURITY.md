@@ -4,4 +4,4 @@ Report vulnerabilities privately through [GitHub private vulnerability reporting
 
 Fixes go to the `main` branch. There are no maintained older branches.
 
-The Workbench helpers read only the files named on their command line and make no network requests. Evidence Pack refuses symlinks, paths outside the chosen root, common credential filenames and existing output paths. The builder refuses symlinked inputs and packages only the selected files. The Agents plugin connects to `https://agents.draconitic.com/mcp` and sends tool arguments there.
+The Workbench helpers read only the files named on their command line and make no network requests. Evidence Pack refuses symlinks, paths outside the chosen root, common credential files and folders, including a root that is itself a credential folder, and existing output paths. The builder refuses symlinked inputs and packages only the selected files. The Agents plugin connects to `https://agents.draconitic.com/mcp` and sends tool arguments there.
